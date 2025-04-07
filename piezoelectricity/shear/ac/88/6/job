@@ -1,0 +1,63 @@
+#!/bin/bash -l
+#SBATCH --job-name=CFS2ac88
+#SBATCH --account=nn9301k
+#SBATCH --nodes=8
+#SBATCH --ntasks-per-node=32
+#SBATCH --time=10:00:00
+#SBATCH --exclusive
+#SBATCH --partition=normal
+SCRATCH_DIRECTORY=${PWD}
+module load VASP/5.4.4-intel-2022b
+mdl=~/nn9301k/vasp.5.4.4.abfix/bin/vasp_std_abfix_y
+#mdl=vasp_ncl
+echo -e "`date +"%F %T"`\t$SLURM_JOB_ID\t$PWD\t$mdl\t$SLURM_JOB_NAME" >> /cluster/home/romanm/nn9301k/jobs.log
+
+WORKDIR=/cluster/work/users/$USER/$SLURM_JOB_ID    #$SLURM_SUBMIT_DIR
+SUBMITDIR=$SLURM_SUBMIT_DIR
+
+## Set up work directory
+mkdir -p $WORKDIR
+chmod +s $WORKDIR
+
+# Go to submitdir and make softlink
+cd $SUBMITDIR
+ln -s $WORKDIR scratch_$SLURM_JOB_ID
+
+## Copy files to WORKDIR
+cp ./INCAR* $WORKDIR
+cp ./KPOINTS* $WORKDIR
+cp ./POTCAR $WORKDIR
+cp ./POSCAR $WORKDIR
+cp ./CHGCAR $WORKDIR
+rm FERMI_ENERGY
+
+mkdir $WORKDIR/inputs
+cp ./INCAR* $WORKDIR/inputs
+cp ./KPOINTS* $WORKDIR/inputs
+cp ./POTCAR $WORKDIR/inputs
+cp ./POSCAR $WORKDIR/inputs
+cp ./job $WORKDIR/inputs
+
+## Run vasp in workdir
+cd $WORKDIR
+cp POSCAR POSCAR.bak
+#ln -s $SUBMITDIR/WAVECAR
+#ln -s $SUBMITDIR/CHGCAR
+
+echo "Starting calculations..."
+echo ""
+
+#date > a
+#for n in 1 2 3
+#do
+#        echo "Running calculation ... loop $n"
+#        cp KPOINTS$n KPOINTS
+#        cp INCAR$n INCAR
+        srun $mdl
+#        cp CONTCAR POSCAR
+#        cp OUTCAR OUTCAR$n
+#        cp OSZICAR OSZICAR$n
+#done
+#date > b
+
+cp -upr $WORKDIR/* $SUBMITDIR/

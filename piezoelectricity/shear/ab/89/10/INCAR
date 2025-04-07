@@ -1,0 +1,41 @@
+SYSTEM = CuFeS2
+ISTART = 1
+ICHARG = 1
+
+# electronic optimization
+ENCUT = 650
+
+#ionic relaxation
+EDIFF = 1E-6
+EDIFFG = -1E-5
+#IBRION = 1
+#POTIM = 0.1
+#ISIF = 3
+NSW = 0
+SIGMA = 0.03
+ISMEAR = 0 #-5
+#ISYM = 1
+NELM = 500
+
+#NCORE = 16
+#KPAR = 6
+#LWAVE = .TRUE.
+LCHARG = .TRUE.
+LREAL = Auto
+GGA = PS
+LDAU = .TRUE.
+LDAUTYPE = 2 # Dudarev et al.
+LDAUU = 0 0.1 4.7
+LMAXMIX = 4
+#LSORBIT = .TRUE.
+#LPEAD = .TRUE.
+#LEPSILON = .TRUE.
+LCALCPOL = .TRUE.
+PREC = Accurate
+LORBIT = 11
+
+# collinear magnetism
+ISPIN = 2
+#LNONCOLLINEAR = .TRUE.
+MAGMOM = 48*0 4 4 4 4 -4 -4 -4 -4 4 4 4 4 -4 -4 -4 -4
+#SAXIS = 0 0 1 # along z

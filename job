@@ -1,0 +1,27 @@
+#!/bin/bash -l
+#SBATCH --job-name=CFSA111
+#SBATCH --account=nn9301k
+#SBATCH --nodes=8
+#SBATCH --ntasks-per-node=32
+#SBATCH --time=50:00:00
+#SBATCH --exclusive
+#SBATCH --partition=normal
+SCRATCH_DIRECTORY=${PWD}
+module load VASPModules VASP/5.4.4-intel-2018a
+mdl=vasp_ncl
+echo -e "`date +"%F %T"`\t$SLURM_JOB_ID\t$PWD\t$mdl\t$SLURM_JOB_NAME" >> /cluster/home/romanm/nn9301k/jobs.log
+
+for j in {1..3}
+do
+        if [[ $j == 1 ]]; then
+               cp INCAR1 INCAR
+        elif [[ $j < 3 ]]; then
+               cp INCAR2 INCAR
+	else
+		cp INCAR3 INCAR
+        fi
+	mpirun $mdl
+        mkdir run$j
+        cp CONTCAR OSZICAR OUTCAR vasprun.xml run$j
+        cp CONTCAR POSCAR
+done
